@@ -3,62 +3,17 @@ Implementation of a graph structure
 """
 
 ## Libraries
+from distutils.log import info
 from numpy.random import binomial
-#from src import *
-
-
-class Node:
-	"""Class which represents a node in a graph"""
-
-	# Initialisation
-	def __init__(self, number, infos):
-		p1, w1, p2, w2 = infos
-		self.number = number
-		self.p1 = p1
-		self.weight1 = w1
-		self.p2 = p2
-		self.weight2 = w2
-		self.visited = 0
-	
-	# Accessor
-	def getP1(self):
-		return self.p1
-
-	def getP2(self):
-		return self.p2
-	
-	def getWeight1(self):
-		return self.weight1
-	
-	def getWeight2(self):
-		return self.weight2
-
-	def getVisited(self):
-		return self.visited
-	
-	# Mutator
-	def isVisited(self):
-		self.visited = 1
-
-	# Methode
-	def __str__(self) -> str:
-		string = 'Node {} => Primary: {}, Secondary: {}'.format(self.number, (self.p1, self.weight1),
-																	(self.p2, self.weight2)) 
-		return string
-	
-	def __repr__(self) -> str:
-		return "Node()"
-
-
+from Node import Node
 
 
 class Graph:
 	"""Class which represents a graph"""
 
-	def __init__(self, alphas, Lambda, infos):
-		self.Lambda = Lambda
+	def __init__(self, alphas, mu, infos):
+		self.mu = mu
 		self.alphas = alphas
-		self.current = 0
 		self.nodes = []
 		for num in range(len(infos)):
 			self.nodes.append(Node(num, infos[num]))
@@ -68,17 +23,15 @@ class Graph:
 		return self.nodes[num]
 
 	# Methods
-	def getNextNode(self):
+	def getNextNode(self, current):
 		"""Choose with a bernoulli distrib the next node"""
-		p1, w1 = self.nodes[self.current].getP1(), self.nodes[self.current].getWeight1()
-		p2, w2 = self.nodes[self.current].getP2(), self.nodes[self.current].getWeight2()
-		if self.nodes[p1].getVisited() == 0: #If is not visited
+		p1, w1 = self.nodes[current].getP1(), self.nodes[current].getWeight1()
+		p2, w2 = self.nodes[current].getP2(), self.nodes[current].getWeight2()
+		if not self.nodes[p1].getVisited(): #If is not visited
 			if(binomial(1,w1)):  #If he clicks
-				self.current = p1  #Go to p1
 				return p1
-		if self.nodes[p2].getVisited() == 0:
-			if(binomial(1, w2*self.Lambda)):
-				self.current = p2
+		if not self.nodes[p2].getVisited():
+			if(binomial(1, w2*self.mu)):
 				return p2
 		return None
 
@@ -178,12 +131,19 @@ class Graph:
 			picks.append(pick)
 		print(picks)
 """
-infos = [[2,0.3,4,0.3], [2,0.6,4,0.3], [2,0.6,4,0.3], [2,0.6,4,0.3], [2,0.6,4,0.3]]
-g = Graph(1,0.2, infos)
-#print(g)
 
-n = Node(0, [2,1.6,4,0.3])
-#print(n)
+def main():
+	infos = [[2,0.5,4,1], [2,0.6,4,0.3], [2,0.6,4,0.3], [2,0.6,4,0.3], [2,0.6,4,0.3]]
+	g = Graph(1,0.5, infos)
+	print(g)
+	a = None
+	while(a==None):
+		a = g.getNextNode(0)
+		print(a)
+
+if __name__ == "__main__":
+	main()
+
 
 #a = g.getNextNode()
 #while a == None:
