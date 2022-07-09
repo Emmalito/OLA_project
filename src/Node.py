@@ -1,51 +1,78 @@
 """
-Implementation of a graph structure
+    Implementation of the object "node" of a 
+    graph via a class with several methods
 """
-
-## Libraries
-from numpy.random import binomial
-#from src import *
-
 
 class Node:
 	"""Class which represents a node in a graph"""
 
 	# Initialisation
-	def __init__(self, number, infos):
-		p1, w1, p2, w2 = infos
-		self.number = number
-		self.p1 = p1
-		self.weight1 = w1
-		self.p2 = p2
-		self.weight2 = w2
-		self.visited = 0
+	def __init__(self, id, infos):
+		""" Initialisation of a node
+
+		Args:
+			p1, p2 (int) : secondary display nodes when self is primary, in this order
+			w1, w2 (int) : weights associated to them if they are in the first slots 
+			id 	   (int) : nb of the node
+			visited(bool): tell if the node has already been display
+		Return:
+			none
+		"""
+		self.p1,self.w1,self.p2, self.w2 = infos
+		self.id = id
+		self.visited = False
 	
 	# Accessor
 	def getP1(self):
+		"""return first secondary product
+
+		Returns:
+			int : p1
+		"""
 		return self.p1
 
 	def getP2(self):
+		"""return second secondary product
+
+		Returns:
+			int : p2
+		"""
 		return self.p2
 	
 	def getWeight1(self):
-		return self.weight1
+		"""return first weight
+
+		Returns:
+			int : w1
+		"""
+		return self.w1
 	
 	def getWeight2(self):
-		return self.weight2
+		"""return second weight
+
+		Returns:
+			int : w2
+		"""
+		return self.w2
 
 	def getVisited(self):
+		"""tell if the node has been visited
+
+		Returns:
+			bool : visited
+		"""
 		return self.visited
 	
 	# Mutator
 	def isVisited(self):
-		self.visited = 1
+		"""set the node as visited"""
+		self.visited = True
 
 	# Methode
 	def __str__(self) -> str:
-		string = 'Node {} => Primary: {}, Secondary: {}'.format(self.number, (self.p1, self.weight1),
-																	(self.p2, self.weight2)) 
+		string = 'Node {} => Primary: {}, Secondary: {}, Status:{}'.format(self.id, (self.p1, self.w1),
+																	(self.p2, self.w2), self.visited) 
 		return string
 	
 	def __repr__(self) -> str:
 		return "Node()"
-
