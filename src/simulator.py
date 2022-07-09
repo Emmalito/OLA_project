@@ -19,15 +19,17 @@ class Simulator:
 	def __init__(self, infos, mu, alphas,nb_classes):
 		self.graphs = []
 		self.current = []
+		self.expect_alphas = alphas
 		for graph in range(nb_classes):
 			#print("step ", graph)
 			#print(self.generate_alpha(alphas[graph]),mu[graph],infos[graph], sep="\n")
-			self.graphs.append(Graph(self.generate_alpha(alphas[graph]),mu[graph],infos[graph]))
+			self.graphs.append(Graph(mu[graph],infos[graph]))
 			self.current.append(self.entrance(graph))
 		
 
 
 	def generate_alpha(self, alpha):
+		""" generate noisy alpha per day"""
 		alphas = []
 		n_MAX_customers = 1000
 		alpha_ratio = np.random.multinomial(n_MAX_customers, alpha)
@@ -50,7 +52,7 @@ class Simulator:
 		return new_primary
 
 	def entrance(self, classe):
-		alphas = self.getGraph(classe).getAlphas()
+		alphas = self.generate_alpha(self.expect_alphas[classe])
 		nb_prod = len(alphas)
 		first_arrival = np.random.choice(np.arange(0, nb_prod), p=alphas)
 		if first_arrival == 0 :#competitor
@@ -62,12 +64,16 @@ class Simulator:
 def generate_infos(size, nb_product):
 	infos = []
 	pick  = [e for e in range(nb_product)]
-	for node in range(size):
+	for graph in range(size):
 		#random.randint(0,10)/10 to have human readable probabilities
 		#random.randint(0,nb_product) fix the secondary product to display (can it be itself ? if not : random.choice(pick.copy().remove(node)))
-		pick_tmp = pick.copy()
-		pick_tmp.remove(node)
-		tmp = [[random.choice(pick_tmp),random.randint(0,10)/10,random.choice(pick_tmp),random.randint(0,10)/10] for _ in range(nb_product)]
+		#pick_tmp = pick.copy()
+		#pick_tmp.remove(node)
+		tmp = []
+		for node in range(nb_product):
+			pick_tmp = pick.copy()
+			pick_tmp.remove(node)
+			tmp.append([random.choice(pick_tmp),random.randint(0,10)/10,random.choice(pick_tmp),random.randint(0,10)/10])
 		infos.append(tmp)
 	return infos
 
