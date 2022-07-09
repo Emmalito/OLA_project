@@ -1,5 +1,5 @@
 """
-Implementation of a graph structure
+	Implementation of a graph structure
 """
 
 ## Libraries
@@ -11,13 +11,24 @@ class Graph:
 	"""Class which represents a graph"""
 
 	def __init__(self, mu, infos):
+		"""
+			Initialisation of a graph
+			Args:
+			mu (int) : Lambda of the 
+			info (list of list) : for each product, it is the list of
+								2 products and their weights associated (p1, w1, p2, w2)
+		Return:
+			none
+		"""
 		self.mu = mu
 		self.nodes = []
 		for num in range(len(infos)):
 			self.nodes.append(Node(num, infos[num]))
 
+
 	# Accesseur
 	def getNode(self, num):
+		""" Return the node number 'num' """
 		return self.nodes[num]
 
 	# Methods
@@ -38,6 +49,7 @@ class Graph:
 		self.nodes[id].isVisited()
 
 	def __str__(self) -> str:
+		"""String for the standard output"""
 		strings = ""
 		for node in self.nodes:
 			strings += "\n" + str(node)
