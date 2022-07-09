@@ -40,6 +40,12 @@ class Graph:
 		for node in self.nodes:
 			strings += "\n" + str(node)
 		return strings
+
+	def getAlphas(self):
+		return self.alphas
+
+	def nodeVisited(self, id):
+		self.nodes[id].isVisited()
 		
 
 

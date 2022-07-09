@@ -18,11 +18,12 @@ class Simulator:
 
 	def __init__(self, infos, mu, alphas,nb_classes):
 		self.graphs = []
-		self.current = [0 for _ in range(nb_classes)]
+		self.current = []
 		for graph in range(nb_classes):
 			#print("step ", graph)
 			#print(self.generate_alpha(alphas[graph]),mu[graph],infos[graph], sep="\n")
 			self.graphs.append(Graph(self.generate_alpha(alphas[graph]),mu[graph],infos[graph]))
+			self.current.append(self.entrance(graph))
 		
 
 
@@ -33,14 +34,29 @@ class Simulator:
 		alphas = np.random.dirichlet(alpha_ratio)
 		return alphas
 
+	def getGraph(self, classe):
+		return self.graphs[classe]
+	
 	def getPrimary(self, classe):
 		return self.current[classe]
 	
 	def click(self, classe):
 		current = self.getPrimary(classe)
+		if current == None:
+			return exit # case where either on competitor site, or no more product can be click because all have already been display
 		new_primary = self.graphs[classe].getNextNode(current)
+		self.graphs[classe].nodeVisited(current) # mettre a visiter au moment on ou click dessus ou quand on part de la page?
 		self.current[classe] = new_primary
 		return new_primary
+
+	def entrance(self, classe):
+		alphas = self.getGraph(classe).getAlphas()
+		nb_prod = len(alphas)
+		first_arrival = np.random.choice(np.arange(0, nb_prod), p=alphas)
+		if first_arrival == 0 :#competitor
+			return None
+		else :
+			return first_arrival-1 #id of node
 
 	
 def generate_infos(size, nb_product):
@@ -68,7 +84,8 @@ def main():
 	simu = Simulator(generate_infos(nb_classes,nb_product), generate_mu(nb_classes), expected_alphas, nb_classes)
 	for i in range(len(simu.graphs)):
 		print(simu.graphs[i])
-		print(simu.click(i))
+		print('current : ',simu.current[i])
+		print("after click ", simu.click(i))
 	
 
 
