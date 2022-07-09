@@ -67,8 +67,6 @@ def generate_infos(size, nb_product):
 	for graph in range(size):
 		#random.randint(0,10)/10 to have human readable probabilities
 		#random.randint(0,nb_product) fix the secondary product to display (can it be itself ? if not : random.choice(pick.copy().remove(node)))
-		#pick_tmp = pick.copy()
-		#pick_tmp.remove(node)
 		tmp = []
 		for node in range(nb_product):
 			pick_tmp = pick.copy()
