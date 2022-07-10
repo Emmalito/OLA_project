@@ -8,7 +8,7 @@ class Product:
 	"""Class which represents a node in a graph"""
 
 	# Initialisation
-	def __init__(self, id, infos):
+	def __init__(self, id, infos, prices):
 		""" Initialisation of a Product
 
 		Args:
@@ -16,13 +16,15 @@ class Product:
 			w1, w2 (int) : weights associated to them if they are in the first slots 
 			id 	   (int) : nb of the node
 			visited(bool): tell if the node has already been display
+			prices (list): List of the product's prices
 		Return:
 			none
 		"""
 		self.p1,self.w1,self.p2, self.w2 = infos
 		self.id = id
-		self.prices = []
-		self.currentPrice = None  #Int => Index of the current price
+		self.prices = prices
+		self.prices.sort()  #We sort the prices
+		self.currentPrice = 0  #Int => Index of the current price
 		self.visited = False
 	
 	# Accessor
@@ -88,20 +90,11 @@ class Product:
 		"""set the node as visited"""
 		self.visited = True
 	
-	def addPrices(self, prices):
-		"""Add a list of prices"""
-		if len(prices) < 1:
-			raise ValueError("The list can not be empty!")
-		self.prices = prices
-		self.currentPrice = 0
-	
 
 	# Methode
 	def getNextPrice(self):
 		"""Increment the current price and return
 		the next price """
-		if self.currentPrice == None:
-			return None
 		if self.currentPrice == len(self.prices) - 1:
 			return None
 		self.currentPrice += 1
