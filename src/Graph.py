@@ -1,10 +1,10 @@
 """
-	Implementation of a graph structure
+	Implementation of a products graph structure
 """
 
 ## Libraries
 from numpy.random import binomial
-from Node import Node
+from Product import Product
 
 
 class Graph:
@@ -14,43 +14,44 @@ class Graph:
 		"""
 			Initialisation of a graph
 			Args:
-			mu (int) : Lambda of the 
+			mu (int) : Lambda for the project
 			info (list of list) : for each product, it is the list of
 								2 products and their weights associated (p1, w1, p2, w2)
 		Return:
 			none
 		"""
 		self.mu = mu
-		self.nodes = []
+		self.products = []
 		for num in range(len(infos)):
-			self.nodes.append(Node(num, infos[num]))
+			self.products.append(Product(num, infos[num]))
 
 
 	# Accesseur
-	def getNode(self, num):
-		""" Return the node number 'num' """
-		return self.nodes[num]
+	def getProduct(self, index):
+		""" Return the product with the right index"""
+		return self.products[index]
+
 
 	# Methods
-	def getNextNode(self, current):
-		"""Choose with a bernoulli distrib the next node"""
-		p1, w1 = self.nodes[current].getP1(), self.nodes[current].getWeight1()
-		p2, w2 = self.nodes[current].getP2(), self.nodes[current].getWeight2()
-		if not self.nodes[p1].getVisited(): #If is not visited
+	def getNextProduct(self, current):
+		"""Choose with a bernoulli distrib the next product"""
+		p1, w1 = self.products[current].getP1(), self.products[current].getWeight1()
+		p2, w2 = self.products[current].getP2(), self.products[current].getWeight2()
+		if not self.products[p1].getVisited(): #If is not visited
 			if(binomial(1,w1)):  #If he clicks
 				return p1
-		if not self.nodes[p2].getVisited():
+		if not self.products[p2].getVisited():
 			if(binomial(1, w2*self.mu)):
 				return p2
 		return None
 
-	def nodeVisited(self, id):
-		"""Set the visit status of a node"""
-		self.nodes[id].isVisited()
+	def prodVisited(self, index):
+		"""Set the visit status of a product"""
+		self.products[index].isVisited()
 
 	def __str__(self) -> str:
 		"""String for the standard output"""
 		strings = ""
-		for node in self.nodes:
-			strings += "\n" + str(node)
+		for product in self.products:
+			strings += "\n" + str(product)
 		return strings

@@ -12,7 +12,7 @@ def main():
 
 	a = None
 	while(a==None):
-		a = g.getNextNode(0)
+		a = g.getNextProduct(0)
 		print("Primary product is ", a)
 
 if __name__ == "__main__":
