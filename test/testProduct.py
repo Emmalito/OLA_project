@@ -26,6 +26,10 @@ def main():
 	print(first_prod.getCurrentPrice())
 	print(first_prod.getNextPrice())
 	print(first_prod.getCurrentPrice())
+	#Print all the price until next the last one
+	print(first_prod.getNextPrice())
+	print(first_prod.getNextPrice())
+	print(first_prod.getNextPrice())
 
 	
 if __name__ == "__main__":
