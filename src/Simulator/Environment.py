@@ -29,11 +29,12 @@ def main():
     # Accessor
     print(simulator.getGraph(1))
 
-    cart = simulator.runDay()
-    print(cart)
+    cart, rewards = simulator.runDay(100)
+    print("Cart : ", cart)
+    print("Rewards: ", rewards)
 
 if __name__ == "__main__":
-    for _ in range(100000):
+    for _ in range(10):
         main()
         print("\n")
 

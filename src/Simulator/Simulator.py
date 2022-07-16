@@ -8,6 +8,7 @@
 ## Libraries
 from random import randint
 import numpy as np
+from pyrfc3339 import generate
 
 
 class Simulator:
@@ -23,6 +24,7 @@ class Simulator:
 		"""
 		self.users = users
 		self.cart = {}
+		self.rewards = {}
 		self.graphs = graphs
 
 
@@ -33,9 +35,8 @@ class Simulator:
 	
 
 	# Old Methods
-	def entrance(self, classe):
+	def entrance(self, alphas):
 		"""Define the 1st webpage"""
-		alphas = self.alphas[classe]
 		nb_prod = len(alphas)
 		first_arrival = np.random.choice(np.arange(0, nb_prod), p=alphas)
 		if first_arrival == 0 :#competitor
@@ -53,23 +54,29 @@ class Simulator:
 		return new_primary
 
 	# Methods
+	def generateAlpha(self):
+		"""Return the noisy alphas for each user class"""
+		alphas = []
+		for user in self.users:
+			alphas.append(user.generateAlpha())
+		return alphas
+
 	def runDay(self, numberCustomer):
 		"""Simulate a sale day on the ecommerce website"""
+		noisyAlphas = self.generateAlpha()
 		for num in range(self.graphs[0].getNbProduct()):
-			self.cart[num] = 0    #Total number of item sold
+			self.cart[num] = 0      #Total number of item sold
+			self.rewards[num] = 0   #Total of products sold
 		for _ in range(numberCustomer):
 			user = randint(0, 2)
-			self.runUser(user, self.graphs[user])
-		#index = 0
-		#for user in self.users:
-		#	self.runUser(user, self.graphs[index])
-		#	index += 1
-		return self.cart # Return the number of products sold
+			self.runUser(self.users[user], self.graphs[user], noisyAlphas[user])
+		return self.cart, self.rewards  # Return the 2 dictionnary
 	
-	def runUser(self, user, graph):
+	def runUser(self, user, graph, alphas):
 		"""Simulate a sale day for one class of customer"""
-		for product in range(graph.getNbProduct()):
-			self.runProduct(product, user, user.generateAlpha(), graph)
+		product = self.entrance(alphas)
+		if product != None:   	#If we not on the competitor webpage
+			self.runProduct(product, user, alphas, graph)
 			graph.restoreVisited()
 
 	def runProduct(self, product, user, alphas, graph):
@@ -78,6 +85,7 @@ class Simulator:
 			return None #We stop
 		graph.prodVisited(product)
 		if user.buyOrNot(graph.getProduct(product).getCurrentPrice()):
+			self.rewards[product] += 1
 			self.cart[product] += user.nmbItemToBuy()   #We add the number of item in the cart
 			nextProducts = graph.getNextProduct(product) #Get the next product(s)
 			for nextProd in nextProducts:
