@@ -6,6 +6,7 @@
 """
 
 ## Libraries
+from random import randint
 import numpy as np
 
 
@@ -17,16 +18,12 @@ class Simulator:
 	def __init__(self, graphs, users):
 		"""
 			Args:
-			infos (list of list of list): List of infos for one graph
-			mus (list): List of the lambda for each graphs 	
-			users (list of list): List of users class
+			graphs (list): List of users graphs
+			users (list): List of user's class
 		"""
 		self.users = users
 		self.cart = {}
 		self.graphs = graphs
-		#[]
-		#for graph in range(len(users)):
-		#	self.graphs.append(Graph(mus[graph], infos[graph]))
 
 
 	#Accesors
@@ -56,14 +53,17 @@ class Simulator:
 		return new_primary
 
 	# Methods
-	def runDay(self):
+	def runDay(self, numberCustomer):
 		"""Simulate a sale day on the ecommerce website"""
 		for num in range(self.graphs[0].getNbProduct()):
 			self.cart[num] = 0    #Total number of item sold
-		index = 0
-		for user in self.users:
-			self.runUser(user, self.graphs[index])
-			index += 1
+		for _ in range(numberCustomer):
+			user = randint(0, 2)
+			self.runUser(user, self.graphs[user])
+		#index = 0
+		#for user in self.users:
+		#	self.runUser(user, self.graphs[index])
+		#	index += 1
 		return self.cart # Return the number of products sold
 	
 	def runUser(self, user, graph):
