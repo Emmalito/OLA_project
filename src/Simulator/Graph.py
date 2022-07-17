@@ -9,16 +9,18 @@ from numpy.random import binomial
 class Graph:
 	"""Class which represents a graph"""
 
-	def __init__(self, mu, products):
+	def __init__(self, mu, products, weights):
 		"""
 			Initialisation of a graph
 			Args:
-			mu (int) : Lambda for the project
-			product (list) : Products' list
+			mu (int): Lambda for the project
+			product (list): Products' list
+			weights (list): Graph's weights for secondary products
 		"""
 		self.visited = []
 		self.mu = mu
 		self.products = products
+		self.weights = weights
 
 
 	# Accessor
@@ -32,7 +34,7 @@ class Graph:
 
 	# Mutator
 	def prodVisited(self, index):
-		if index < len(self.products):
+		if -1 < index < len(self.products):
 			self.visited.append(index)
 		else:
 			raise IndexError("The product ", index, " is not in the graph")
@@ -49,8 +51,8 @@ class Graph:
 	
 	def getNextProduct(self, current):
 		"""Choose with a bernoulli distrib the next product"""
-		p1, w1 = self.products[current].getP1(), self.products[current].getWeight1()
-		p2, w2 = self.products[current].getP2(), self.products[current].getWeight2()
+		p1, p2 = self.products[current].getP1(), self.products[current].getP2()
+		w1, w2 = self.weights[current]
 		nextProducts = []
 		if not p1 in self.visited:    #If is not visited
 			if(binomial(1,w1)):       #If he clicks

@@ -1,34 +1,37 @@
 # Test of the Product class
 
 import sys
+import unittest
 sys.path.append("./src/Simulator")
 from Product import Product
 
 
-def main():
-	#Initialisation
-	first_prod = Product(0, [1,0.7, 2,0.3], [7, 11, 13])
-	second_prod = Product(1, [0,0.7, 2,0.3], [2, 11, 13])
-	third_prod = Product(2, [0,0.7, 1,0.3], [10, 11, 13])
 
-	#Accessor
-	print(first_prod.getP1(), first_prod.getP2(),first_prod.getWeight1(),first_prod.getWeight2())
-	print("Prices: ", first_prod.getPrices(), " current price: ", first_prod.getCurrentPrice())
+class TestProductMethods(unittest.TestCase):
+
+	def setUp(self):
+		self.first_prod = Product(0, [1, 2], [7, 11, 13])
+		self.second_prod = Product(1, [0, 2], [2, 11, 13])
+		self.third_prod = Product(2, [0, 1], [10, 11, 13])
+
+	def test_accessor(self):
+		self.assertEqual(self.first_prod.getP1(), 1)
+		self.assertEqual(self.first_prod.getP2(), 2)
+		self.assertEqual(self.first_prod.getPrices(), [7, 11, 13])
+		self.assertEqual(self.first_prod.getCurrentPrice(), 7)
+
+	def test_mutator(self):
+		self.first_prod.nextPrice()
+		self.assertEqual(self.first_prod.getCurrentPrice(), 11)
+
+	def test_change_price(self):
+		for _ in range(20):
+			self.second_prod.nextPrice()
+			self.assertTrue(self.second_prod.getCurrentPrice() != None)
 	
-	#Mutator
-	print(first_prod.getCurrentPrice())
-	first_prod.nextPrice()
-	print(first_prod.getCurrentPrice())
-
-	for i in range(10):
-		print("index ", i, " price = ", second_prod.getCurrentPrice())
-		second_prod.nextPrice()
-
-
-	#Methods
-	print("Product n° ", third_prod.getId())
-	print(third_prod)
+	def test_id(self):
+		self.assertTrue(self. third_prod.getId(), 2)
 
 
 if __name__ == "__main__":
-	main()
+	unittest.main(verbosity=2)

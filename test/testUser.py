@@ -1,27 +1,39 @@
 # Test the User class
 
 import sys
-
-from matplotlib import use
+import unittest
 sys.path.append("./src/Simulator")
 from User import User
 
 
-def main():
-    """Simulation of a environment"""
-    user1 = User([0.2,0.3,0.2,0.3], 100, 5, 15)
-    user2 = User([0.4,0.1,0.3,0.2], 200, 12, 23)
-    user3 = User([0.1,0.1,0.3,0.5], 60, 9, 8)
+class TestUserMethods(unittest.TestCase):
 
-    for _ in range(10):
-        print(user1.dayliUsers(), sep=" ; ")
-    
-    for _ in range(10):
-        print(user2.generateAlpha(), sep=" ; ")
+    def setUp(self):
+        self.user1 = User([0.2,0.3,0.2,0.3], 100, 5, 15)
+        self.user2 = User([0.4,0.1,0.3,0.2], 200, 12, 23)
+        self.user3 = User([0.1,0.1,0.3,0.5], 6, 9, 8)
 
-    print("True = ", user3.buyOrNot(3))
-    print("True = ", user3.buyOrNot(9))
-    print("False = ", user3.buyOrNot(11))
+    def test_dayli(self):
+        for _ in range(100):
+            self.assertTrue(self.user3.dayliUsers() > 1)
+
+    def test_alpha(self):
+        for _ in range(100):
+            tmp = self.user2.generateAlpha()
+            self.assertTrue(tmp != [])
+
+    def test_buy(self):
+        self.assertTrue(self.user3.buyOrNot(3))
+        self.assertTrue(self.user3.buyOrNot(9))
+        self.assertFalse(self.user3.buyOrNot(11))
+
+    def test_item(self):
+        tmp = []
+        for _ in range(1000):
+            tmp.append(self.user2.nmbItemToBuy())
+            self.assertNotEqual(tmp[-1], 0)
+        self.assertTrue(round(sum(tmp)/len(tmp)) - 200 < 30)
+
 
 if __name__ == "__main__":
-	main()
+    unittest.main(verbosity=2)

@@ -8,7 +8,6 @@
 ## Libraries
 from random import randint
 import numpy as np
-from pyrfc3339 import generate
 
 
 class Simulator:
@@ -25,6 +24,7 @@ class Simulator:
 		self.users = users
 		self.cart = {}
 		self.rewards = {}
+		self.visited = {}
 		self.graphs = graphs
 
 
@@ -61,17 +61,21 @@ class Simulator:
 			alphas.append(user.generateAlpha())
 		return alphas
 
+
 	def runDay(self, numberCustomer):
 		"""Simulate a sale day on the ecommerce website"""
 		noisyAlphas = self.generateAlpha()
-		for num in range(self.graphs[0].getNbProduct()):
-			self.cart[num] = 0      #Total number of item sold
-			self.rewards[num] = 0   #Total of products sold
+		for prod in range(self.graphs[0].getNbProduct()):
+			self.cart[prod] = 0      #Total number of item sold
+			self.rewards[prod] = 0   #Total of products sold
+			self.visited[prod] = 0
 		for _ in range(numberCustomer):
-			user = randint(0, 2)
+			user = randint(0, len(self.users)-1)
 			self.runUser(self.users[user], self.graphs[user], noisyAlphas[user])
-		return self.cart, self.rewards  # Return the 2 dictionnary
+		rewards = self.getRewardsPerRound(numberCustomer)
+		return self.cart, self.rewards, rewards, self.visited  # Return the 2 dictionnary
 	
+
 	def runUser(self, user, graph, alphas):
 		"""Simulate a sale day for one class of customer"""
 		product = self.entrance(alphas)
@@ -79,21 +83,26 @@ class Simulator:
 			self.runProduct(product, user, alphas, graph)
 			graph.restoreVisited()
 
+
 	def runProduct(self, product, user, alphas, graph):
 		"""Simulate the sale of one product for an user"""
 		if graph.alreadyVisited(product):
 			return None #We stop
 		graph.prodVisited(product)
+		self.visited[product] += 1
 		if user.buyOrNot(graph.getProduct(product).getCurrentPrice()):
 			self.rewards[product] += 1
 			self.cart[product] += user.nmbItemToBuy()   #We add the number of item in the cart
 			nextProducts = graph.getNextProduct(product) #Get the next product(s)
 			for nextProd in nextProducts:
-				self.runProduct(nextProd, user, alphas, graph) #
-
-		
-
-
-
+				self.runProduct(nextProd, user, alphas, graph)
 	
-	
+
+	def getRewardsPerRound(self, nbVisitor):
+		"""Simulation of the rewards for each 
+		current prices products"""
+		rewards = []
+		for elem in self.rewards:
+			proba = self.rewards.get(elem)/nbVisitor
+			rewards.append(np.random.binomial(1,proba))
+		return rewards

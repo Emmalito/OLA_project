@@ -1,42 +1,52 @@
 # Tests Class Graph
 
 import sys
+import unittest
 sys.path.append("./src/Simulator")
 from Product import Product
 from Graph import Graph
 
 
-def main():
-	prod1 = Product(0, [1,0.7, 2,0.3], [7, 11, 13])
-	prod2 = Product(1, [0,0.7, 2,0.3], [2, 11, 13])
-	prod3 = Product(2, [0,0.7, 1,0.5], [10, 11, 13])
 
-	graph1 = Graph(0.5, [prod1, prod2, prod3])
-	graph2 = Graph(0.2, [prod1, prod2, prod3])
-	graph3 = Graph(1, [prod1, prod2, prod3])
+class TestGraphMethods(unittest.TestCase):
 
-	# Accessor
-	print("List of products = ", graph1.getProduct(0), graph1.getProduct(1), graph1.getProduct(2))
-	print("Nb product = ", graph1.getNbProduct())
+	def setUp(self) -> None:
+		self.prod1 = Product(0, [1, 2], [7, 11, 13])
+		self.prod2 = Product(1, [0, 2], [2, 11, 13])
+		self.prod3 = Product(2, [0, 1], [10, 11, 13])
 
-	#Mutator
-	for i in range(3):
-		graph1.prodVisited(i)
-	try:
-		graph1.prodVisited(3)
-	except IndexError:
-		print("Good")
+		self.weights1 = [[0.7, 0.4], [0.6, 0.2], [0.9, 0.1]]
+		self.weights2 = [[0.9, 0.1], [0.8, 0.5], [0.6, 0.2]]
+		self.weights3 = [[0.6, 0.2], [0.7, 0.4], [0.7, 0.5]]
 
-	# Methods
-	graph2.prodVisited(1)
-	print("True = ", graph2.alreadyVisited(1))
-	graph2.restoreVisited()
-	print("False = ", graph2.alreadyVisited(1))
-
-	for _ in range(10):
-		print(graph3.getNextProduct(1))
-		graph3.restoreVisited()
+		self.graph1 = Graph(0.5, [self.prod1, self.prod2, self.prod3], self.weights1)
+		self.graph2 = Graph(0.2, [self.prod1, self.prod2, self.prod3], self.weights2)
+		self.graph3 = Graph(1, [self.prod1, self.prod2, self.prod3], self.weights3)
+		return super().setUp()
 	
+	def test_accessor(self):
+		self.assertEqual(self.graph1.getNbProduct(), 3)
+		self.assertEqual(self.graph1.getProduct(0), self.prod1)
+		self.assertEqual(self.graph1.getProduct(1), self.prod2)
+		self.assertEqual(self.graph1.getProduct(2), self.prod3)
+
+	def test_methods(self):
+		self.graph2.prodVisited(0)
+		self.graph2.prodVisited(1)
+
+		self.assertTrue(self.graph2.alreadyVisited(0))
+		self.assertTrue(self.graph2.alreadyVisited(1))
+		self.assertFalse(self.graph2.alreadyVisited(2))
+
+		self.graph2.restoreVisited()
+		self.assertFalse(self.graph2.alreadyVisited(0))
+
+	def test_prodVisited(self):
+		with self.assertRaises(IndexError):
+			self.graph3.prodVisited(4)
+		with self.assertRaises(IndexError):
+			self.graph3.prodVisited(-2)
+
 
 if __name__ == "__main__":
-	main()
+	unittest.main(verbosity=2)
