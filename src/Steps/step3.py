@@ -9,7 +9,7 @@ from Simulator.User import User
 from Simulator.Graph import Graph
 from Simulator.Product import Product
 from Simulator.Simulator import Simulator
-from learner import TS_Learner
+from Learner.learner import TS_Learner
 
 
 
