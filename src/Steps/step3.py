@@ -10,15 +10,16 @@ from Simulator.Graph import Graph
 from Simulator.Product import Product
 from Simulator.Simulator import Simulator
 from Learner.learner import TS_Learner
+from Algorithme import optimization
 
 
 
-def main():
+def getConversionRates():
     """Simulation of the step3 environment """
 
     #Create the simulation environment
     # We use only 1 user that reflects the agregated data
-    user = User([0.2,0.3,0.2,0.3], 100, 5, 15)
+    user = User([0.2,0.3,0.2,0.3], 100, 6, 15)
     # We create the products
     prod1 = Product(0, [4, 2], [1, 2, 4, 8])
     prod2 = Product(1, [0, 4], [2, 3, 5, 13])
@@ -38,7 +39,7 @@ def main():
     l4 = TS_Learner(4)
     l5 = TS_Learner(4)
 
-    for _ in range(100):
+    for _ in range(10):
         #We choose the arm to pull
         pulled_arm1 = l1.pull_arm()
         pulled_arm2 = l2.pull_arm()
@@ -50,7 +51,7 @@ def main():
         prod2.changePrice(pulled_arm2)
         prod3.changePrice(pulled_arm3)
         prod4.changePrice(pulled_arm4)
-        prod4.changePrice(pulled_arm5)
+        prod5.changePrice(pulled_arm5)
         #We get the corresponding rewards
         _, rewards1, _, nbImpress = simulator.runDay(1000)
         nbImpress = list(nbImpress.values())
@@ -63,37 +64,29 @@ def main():
         l4.update(pulled_arm4, rewards0[3], rewards1[3])
         l5.update(pulled_arm5, rewards0[4], rewards1[4])
 
-    #Let's verify if the function is correct
-    #By computing the empirical conversion rates
-    conversionRates = {}
-    for idx in range(4):
-        rew, vis = [0,0,0,0,0], [0,0,0,0,0]
-        prod1.changePrice(idx)
-        prod2.changePrice(idx)
-        prod3.changePrice(idx)
-        prod4.changePrice(idx)
-        prod5.changePrice(idx)
-        for _ in range(5):
-            _, rewards, _, visited = simulator.runDay(100)
-            rew = [sum(i) for i in zip(rew, list(rewards.values()))]
-            vis = [sum(i) for i in zip(vis, list(visited.values()))]
-        empirical = []
-        for i in range(len(rew)):
-            if vis[i] != 0:
-                empirical.append(rew[i] / vis[i])
-            else:
-                empirical.append(0)
-        #print("Rates price", idx, " = ", empirical)
-        conversionRates[idx] = empirical
-    #print(conversionRates)
+    convRates = []
+    learners = [l1, l2, l3, l4, l5]
+    for learn in learners:
+        beta = learn.getBetaParameters()
+        convRates.append([beta[elem][0]/(beta[elem][0]+beta[elem][1]) for elem in range(len(beta))])
 
-    betaL1 = l1.getBetaParameters()
-    expected = [0.8, 0.6, 0.2, 0]
-    print("Conversion rate for product 1")
-    for elem in range(len(betaL1)):
-        print("TS algorithm = ", betaL1[elem][0]/(betaL1[elem][0]+betaL1[elem][1]), "; Empirical mean = ",
-              conversionRates[elem][0], "; Expected mean = ", expected[elem])
+    return convRates
 
 
 if __name__ == "__main__":
-    main()
+    #1 - We learn the conversion rates
+    conversionRates = getConversionRates()
+
+    #2 - We fix the others parameters
+    margin = [[1, 2, 4, 8], [2, 3, 5, 13],
+              [2, 5, 8, 10], [3, 5, 6, 9], [4, 7, 9, 13]]
+    alphas = [0.2,0.3,0.2,0.3]
+    nbItemSold = [50, 42, 33, 77, 58]
+    nbUsers = 15
+    graphWeights = [0.2,0.3,0.2,0.3]
+
+    #3 - We play the algorithm
+    bestPrices, bestTotalmargin, _ = optimization(margin, conversionRates, alphas, nbItemSold, nbUsers, graphWeights)
+    for idx in range(len(bestPrices)):
+        print("For the product ", idx, " the best price is ", margin[idx][bestPrices[idx]])
+    print("The total margin with this configuration is ", bestTotalmargin)
