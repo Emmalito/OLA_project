@@ -39,3 +39,39 @@ class TS_Learner(learner):
 
     def getBetaParameters(self):
         return self.beta_parameters
+
+
+class UCB1(learner):
+    def __init__(self, n_arms):
+        super().__init__(n_arms)
+        self.ucb1_criterion = np.zeros(n_arms)
+        self.expected_payoffs = np.zeros(n_arms)
+        self.number_of_pulls = np.zeros(n_arms)
+        
+
+    def pull_arm(self):
+        #Select an arm
+        if self.t < self.n_arms:
+          pulled_arm = self.t  # round robin for the first n steps 
+        else:
+          idxs = np.argwhere(self.ucb1_criterion == self.ucb1_criterion.max()).reshape(-1)  # there can be more arms with max value
+          pulled_arm = np.random.choice(idxs)
+        return pulled_arm
+      
+
+    def update(self, pulled_arm, rewards0, rewards1):
+        #Update UCB1
+        self.t+=1
+        for _ in range(rewards0):
+            self.number_of_pulls[pulled_arm] +=1
+            self.expected_payoffs[pulled_arm] = ((self.expected_payoffs[pulled_arm] * (self.number_of_pulls[pulled_arm] - 1.0) + 0) / 
+                                            self.number_of_pulls[pulled_arm]) # update sample mean for the selected arm
+        for _ in range(rewards1):
+            self.number_of_pulls[pulled_arm] += 1
+            self.expected_payoffs[pulled_arm] = ((self.expected_payoffs[pulled_arm] * (self.number_of_pulls[pulled_arm] - 1.0) + 1) / 
+                                            self.number_of_pulls[pulled_arm]) # update sample mean for the selected arm
+        for k in range(0, self.n_arms):
+          self.ucb1_criterion[k] = self.expected_payoffs[k] + np.sqrt(2 * np.log(self.t) / self.number_of_pulls[k])
+
+    def getExpectedPayoff(self):
+        return self.expected_payoffs
