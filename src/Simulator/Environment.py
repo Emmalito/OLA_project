@@ -3,88 +3,35 @@
     thanks to a simulator object
 """
 
-from User import User
-from Graph import Graph
-from Product import Product
-from Simulator import Simulator
-from test import TS_Learner
+from Simulator.User import User
+from Simulator.Graph import Graph
+from Simulator.Product import Product
+from Simulator.Simulator import Simulator
 
 
 
-def main():
-    """Simulation of a environment"""
-    user1 = User([0.2,0.3,0.2,0.3], 100, 5, 15)
-    #user2 = User([0.4,0.1,0.3,0.2], 200, 2, 23)
-    #user3 = User([0.1,0.1,0.3,0.5], 60, 4, 8)
+def environment():
+    """ """
 
-    prod1 = Product(0, [1, 2], [1, 4, 7, 10])
-    prod2 = Product(1, [0, 2], [3, 3, 7, 13])
-    prod3 = Product(2, [0, 1], [2, 5, 8, 10])
+    #Create the simulation environment for the steps 3-4-5
+    user = User([0.2, 0.1, 0.2, 0.1, 0.2, 0.2], 100, 6, 15)  #1 user that reflects the agregated data
 
-    weights1 = [[0.7, 0.4], [0.6, 0.2], [0.9, 0.1]]
-    #weights2 = [[0.9, 0.1], [0.8, 0.5], [0.6, 0.2]]
-    #weights3 = [[0.6, 0.2], [0.7, 0.4], [0.7, 0.5]]
+    #We create the 5 products
+    prod1 = Product(0, [4, 2], [1, 2, 4, 8])
+    prod2 = Product(1, [0, 4], [2, 3, 5, 13])
+    prod3 = Product(2, [1, 3], [2, 5, 8, 10])
+    prod4 = Product(3, [2, 0], [3, 5, 6, 9])
+    prod5 = Product(4, [3, 1], [4, 7, 9, 13])
 
-    graph1 = Graph(0.9, [prod1, prod2, prod3], weights1)
-    #graph2 = Graph(0.2, [prod1, prod2, prod3], weights2)
-    #graph3 = Graph(0.5, [prod1, prod2, prod3], weights3)
+    #We define the weights
+    weights = [[0.7, 0.4], [0.6, 0.2], [0.9, 0.1], [0.6, 0.5], [0.2, 0.1]]
 
-    #simulator = Simulator([graph1, graph2, graph3], [user1, user2, user3])
-    simulator = Simulator([graph1], [user1])
+    #We use one common graph for these stpes
+    graph = Graph(0.9, [prod1, prod2, prod3, prod4, prod5], weights)
 
-    l1 = TS_Learner(4)  #4 = Number of prices
-    #l2 = TS_Learner(4)
-    #l3 = TS_Learner(4)
+    #The simulator
+    simulator = Simulator([graph], [user])
 
-    # Accessor
-    print(simulator.getGraph(0))
+    products = [prod1, prod2, prod3, prod4, prod5]
 
-    #for _ in range(100):
-    #    cart, re, rewards, visited = simulator.runDay(100)
-
-    cart, re, rewards, visited = simulator.runDay(1000)
-    print("Cart : ", cart)
-    print("Nb visitor = ", visited)
-    print("Rewards: ", re)
-    print("Rewards bernouilli: ", rewards)
-
-    rew, vis = [0,0,0], [0,0,0]
-    for _ in range(100):
-        cart, rewards, re, visited = simulator.runDay(1000)
-        rew = [sum(i) for i in zip(rew, list(rewards.values()))]
-        vis = [sum(i) for i in zip(vis, list(visited.values()))]
-    print("Rates = ", [rew[i] / vis[i] for i in range(len(rew))])
-
-
-    print(prod1.getCurrentPrice())
-    """print(prod2.getCurrentPrice())
-    print(prod3.getCurrentPrice())
-
-    for _ in range(100):
-        pulled_arm1 = l1.pull_arm()
-        pulled_arm2 = l2.pull_arm()
-        pulled_arm3 = l3.pull_arm()
-
-        prod1.changePrice(pulled_arm1)
-        prod2.changePrice(pulled_arm2)
-        prod3.changePrice(pulled_arm3)
-
-        cart, re, rewards = simulator.runDay(1000)
-        #print("Cart : ", cart)
-        #print("Rewards: ", re)
-        #print("Rewards bernouilli: ", rewards)
-
-        l1.update(pulled_arm1, rewards[0])
-        l2.update(pulled_arm2, rewards[1])
-        l3.update(pulled_arm3, rewards[2])
-    
-    print(prod1.getCurrentPrice())
-    print(prod2.getCurrentPrice())
-    print(prod3.getCurrentPrice())"""
-
-    #cart, re, rewards = simulator.runDay(1000000)
-    #print(re)
-
-
-if __name__ == "__main__":
-    main()
+    return simulator, products, user.get_nbItemMax()

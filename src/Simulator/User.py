@@ -3,7 +3,6 @@
     which will use the simulator
 """
 
-from numpy import minimum
 import numpy.random as npr
 
 
@@ -15,6 +14,11 @@ class User:
         self.dayli = dayliUsers
         self.resevationPrice = price
         self.nbItemMax = nbItemMax
+    
+    #Accessor
+    def get_nbItemMax(self):
+        return self.nbItemMax
+
 
     #Methods
     def dayliUsers(self):
@@ -45,7 +49,8 @@ class User:
     
     def nmbItemToBuy(self):
         """Uniform r.v that defines the number of items to buy"""
-        nbItem = round(npr.rand() * self.nbItemMax)     #Can not buy more than 'nbItemMax' items
+        proba = 0.7   # We assume to fix this probability
+        nbItem = npr.binomial(self.nbItemMax, proba)   #Can not buy more than 'nbItemMax' items
         if nbItem > 0:
             return nbItem
         else:

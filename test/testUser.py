@@ -23,9 +23,9 @@ class TestUserMethods(unittest.TestCase):
             self.assertTrue(tmp != [])
 
     def test_buy(self):
-        self.assertTrue(self.user3.buyOrNot(3))
-        self.assertTrue(self.user3.buyOrNot(9))
-        self.assertFalse(self.user3.buyOrNot(11))
+        self.assertTrue(0 < self.user3.buyOrNot(3) <= 1)
+        self.assertEqual(self.user3.buyOrNot(9), 0)
+        self.assertEqual(self.user3.buyOrNot(11), 0)
 
     def test_item(self):
         tmp = []
