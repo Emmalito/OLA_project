@@ -18,6 +18,9 @@ class User:
     #Accessor
     def get_nbItemMax(self):
         return self.nbItemMax
+    
+    def getAlphas(self):
+        return self.expectedAlphas
 
 
     #Methods

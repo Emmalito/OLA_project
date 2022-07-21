@@ -10,13 +10,13 @@ from Learner.learner import TS_Learner
 from Algorithme import optimization
 
 
+#Global variable for the simulation
+nbCustomer = 1000
+nbDays = 20
+
 
 def getRates(simulator, products, nbItemMax):
-    """Simulation of the step3 environment """
-    #We fix the some parameters for the simulation
-    nbCustomer = 1000
-    nbDays = 20
-
+    """TS learner for step 4 """
     #Learners for conversions rates
     learners = [TS_Learner(4) for _ in range(5)]
 
@@ -65,19 +65,21 @@ def getRates(simulator, products, nbItemMax):
 
 if __name__ == "__main__":
     #0 - We recupere our environment
-    simulator, products, nbItemMax = environment()
+    simulator, products = environment()
+    nbItemMax = simulator.getUsers()[0].get_nbItemMax()
 
     #1 - We learn the conversion rates
     conversionRates, alphas, nbItemSold = getRates(simulator, products, nbItemMax)
 
     #2 - We fix the others parameters
-    margin = [[1, 2, 4, 8], [2, 3, 5, 13],
-              [2, 5, 8, 10], [3, 5, 6, 9], [4, 7, 9, 13]]
-    nbUsers = 150
+    margin = [product.getPrices() for product in products] #We fix the price as the margin
+    totalUsers = nbCustomer * nbDays
     graphWeights = [0.2,0.3,0.2,0.3]
 
     #3 - We play the algorithm
-    bestPrices, bestTotalmargin, _ = optimization(margin, conversionRates, alphas, nbItemSold, nbUsers, graphWeights)
+    bestPrices, bestTotalmargin, _ = optimization(margin, conversionRates, alphas,
+                                                nbItemSold, totalUsers, graphWeights)
     for idx in range(len(bestPrices)):
-        print("For the product ", idx, " the best price is ", margin[idx][bestPrices[idx]])
+        print("For the product ", idx, " the best price is ",
+              margin[idx][bestPrices[idx]])
     print("The total margin with this configuration is ", bestTotalmargin)

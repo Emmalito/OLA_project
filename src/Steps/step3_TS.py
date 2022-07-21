@@ -5,18 +5,19 @@
 
 import sys
 sys.path.append("./src")
+import numpy.random as npr
 from Simulator.Environment import environment
 from Learner.learner import TS_Learner
 from Algorithme import optimization
 
 
+#Global variable for the simulation
+nbCustomer = 1000
+nbDays = 20
+
 
 def getConversionRates(simulator, products):
-    """TS learner for step 4"""
-    #We fix the dayli number of customers and the number of day simulation
-    nbCustomer = 1000
-    nbDays = 20
-
+    """TS learner for step 3"""
     #Learners for conversions rates
     learners = [TS_Learner(4) for _ in range(5)]
 
@@ -42,23 +43,24 @@ def getConversionRates(simulator, products):
     for learner in learners:
         beta = learner.getBetaParameters()
         convRates.append([beta[elem][0]/(beta[elem][0]+beta[elem][1]) for elem in range(len(beta))])
+ 
 
     return convRates
 
 
 if __name__ == "__main__":
     #0 - We recupere our environment
-    simulator, products, _ = environment()
+    simulator, products = environment()
 
     #1 - We learn the conversion rates
     conversionRates = getConversionRates(simulator, products)
 
     #2 - We fix the others parameters
-    margin = [[1, 2, 4, 8], [2, 3, 5, 13],
-              [2, 5, 8, 10], [3, 5, 6, 9], [4, 7, 9, 13]]
-    alphas = [0.2, 0.1, 0.2, 0.1, 0.2, 0.2]
-    nbItemSold = [10, 10, 10, 10, 10]
-    totalUsers = 150
+    margin = [product.getPrices() for product in products] #We fix the price as the margin
+    alphas = simulator.getUsers()[0].getAlphas()           #We recupere the expected alphas
+    nbItemMax = simulator.getUsers()[0].get_nbItemMax()
+    nbItemSold = [npr.binomial(nbItemMax, 0.7) for _ in range(5)]
+    totalUsers = nbCustomer * nbDays
     graphWeights = [0.2,0.3,0.2,0.3]
 
     #3 - We play the algorithm

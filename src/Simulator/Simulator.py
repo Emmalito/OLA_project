@@ -28,6 +28,10 @@ class Simulator:
 		self.pageEntrance = []
 		self.graphs = graphs
 
+	#Accessor
+	def getUsers(self):
+		return self.users
+
 	#Methods
 	def entrance(self, alphas):
 		"""Define the 1st webpage for an user"""
