@@ -5,10 +5,6 @@
 
 import sys
 sys.path.append("./src")
-from Simulator.User import User
-from Simulator.Graph import Graph
-from Simulator.Product import Product
-from Simulator.Simulator import Simulator
 from Simulator.Environment import environment
 from Learner.learner import UCB1
 from Algorithme import optimization

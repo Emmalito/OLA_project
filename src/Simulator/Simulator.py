@@ -18,26 +18,19 @@ class Simulator:
 	def __init__(self, graphs, users):
 		"""
 			Args:
-			graphs (list): List of users graphs
 			users (list): List of user's class
+			graphs (list): List of users graphs
 		"""
 		self.users = users
 		self.cart = {}
 		self.rewards = {}
 		self.visited = {}
-		self.pageEntrance = [0 for _ in range(graphs[0].getNbProduct()+1)]
+		self.pageEntrance = []
 		self.graphs = graphs
 
-
-	#Accesors
-	def getGraph(self, index):
-		""" Return the graph corresponding to the index"""
-		return self.graphs[index]
-	
-
-	# Old Methods
+	#Methods
 	def entrance(self, alphas):
-		"""Define the 1st webpage"""
+		"""Define the 1st webpage for an user"""
 		nb_prod = len(alphas)
 		first_arrival = np.random.choice(np.arange(0, nb_prod), p=alphas)
 		if first_arrival == 0 :#competitor
@@ -45,16 +38,7 @@ class Simulator:
 		else :
 			return first_arrival-1 #id of node
 
-	def click(self, classe):
-		current = self.getPrimary(classe)
-		if current == None:
-			return exit # case where either on competitor site, or no more product can be click because all have already been display
-		new_primary = self.graphs[classe].getNextProduct(current)
-		self.graphs[classe].nodeVisited(current) # mettre a visiter au moment on ou click dessus ou quand on part de la page?
-		self.current[classe] = new_primary
-		return new_primary
 
-	# Methods
 	def generateAlpha(self):
 		"""Return the noisy alphas for each user class"""
 		alphas = []

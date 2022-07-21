@@ -11,7 +11,7 @@ from Simulator.Simulator import Simulator
 
 
 def environment():
-    """ """
+    """Set up the environment for the steps"""
 
     #Create the simulation environment for the steps 3-4-5
     user = User([0.2, 0.1, 0.2, 0.1, 0.2, 0.2], 100, 6, 15)  #1 user that reflects the agregated data
