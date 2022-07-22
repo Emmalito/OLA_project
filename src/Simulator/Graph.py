@@ -3,6 +3,7 @@
 """
 
 ## Libraries
+from numpy import product
 from numpy.random import binomial
 
 
@@ -24,6 +25,10 @@ class Graph:
 
 
 	# Accessor
+	def getLambda(self):
+		"""Return the lambda value"""
+		return self.mu
+		
 	def getProduct(self, index):
 		""" Return the product with the right index"""
 		return self.products[index]
@@ -54,12 +59,10 @@ class Graph:
 		p1, p2 = self.products[current].getP1(), self.products[current].getP2()
 		w1, w2 = self.weights[current]
 		nextProducts = []
-		if not p1 in self.visited:    #If is not visited
-			if(binomial(1,w1)):       #If he clicks
-				nextProducts.append(p1)
-		if not p2 in self.visited:
-			if(binomial(1, w2*self.mu)):
-				nextProducts.append(p2)
+		if(binomial(1,w1)):       #If he clicks
+			nextProducts.append(p1)
+		if(binomial(1, w2*self.mu)):
+			nextProducts.append(p2)
 		return nextProducts
 
 

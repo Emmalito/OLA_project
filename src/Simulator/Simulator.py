@@ -26,11 +26,25 @@ class Simulator:
 		self.rewards = {}
 		self.visited = {}
 		self.pageEntrance = []
+		self.secondary = {}
 		self.graphs = graphs
+		self.nbProducts = graphs[0].getNbProduct()
 
 	#Accessor
 	def getUsers(self):
 		return self.users
+
+	def getSecondary(self):
+		return self.secondary
+	
+	def getGraph(self, index):
+		"""Return the indexth graph"""
+		return self.graphs[index]
+	
+	def getNbProducts(self):
+		"""Return the number of product"""
+		return self.nbProducts
+
 
 	#Methods
 	def entrance(self, alphas):
@@ -54,11 +68,12 @@ class Simulator:
 	def runDay(self, numberCustomer):
 		"""Simulate a sale day on the ecommerce website"""
 		noisyAlphas = self.generateAlpha()
-		for prod in range(self.graphs[0].getNbProduct()):
+		for prod in range(self.nbProducts):
 			self.cart[prod] = 0      #Total number of item sold
 			self.rewards[prod] = 0   #Total of products sold
 			self.visited[prod] = 0
-		self.pageEntrance = [0 for _ in range(self.graphs[0].getNbProduct()+1)] #Restore the entrance webpage
+		self.secondary = {prod: [[], []] for prod in range(self.nbProducts)}
+		self.pageEntrance = [0 for _ in range(self.nbProducts+1)] #Restore the entrance webpage
 		for _ in range(numberCustomer):
 			user = randint(0, len(self.users)-1)
 			self.runUser(self.users[user], self.graphs[user], noisyAlphas[user])
@@ -87,15 +102,17 @@ class Simulator:
 			self.rewards[product] += 1
 			self.cart[product] += user.nmbItemToBuy()   #We add the number of item in the cart
 			nextProducts = graph.getNextProduct(product) #Get the next product(s)
+			self.rewardGraphWeight(graph.getProduct(product), nextProducts)
 			for nextProd in nextProducts:
 				self.runProduct(nextProd, user, alphas, graph)
-	
 
-	def getRewardsPerRound(self, nbVisitor):
-		"""Simulation of the rewards for each 
-		current prices products"""
-		rewards = []
-		for elem in self.rewards:
-			proba = self.rewards.get(elem)/nbVisitor
-			rewards.append(np.random.binomial(1,proba))
-		return rewards
+	def rewardGraphWeight(self, product, nextProducts):
+		prod = product.getId()
+		if product.getP1() in nextProducts:
+			self.secondary[prod][0].append(1)
+		else:
+			self.secondary[prod][0].append(0)
+		if product.getP2() in nextProducts:
+			self.secondary[prod][1].append(1)
+		else:
+			self.secondary[prod][1].append(0)
