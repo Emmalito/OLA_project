@@ -38,7 +38,11 @@ class TS_Learner(learner):
             self.beta_parameters[pulled_arm,0] = self.beta_parameters[pulled_arm,0]+1 # count how many succes we have
 
     def getBetaParameters(self):
-        return self.beta_parameters
+        beta = self.beta_parameters.copy()
+        for elem in beta:
+            if elem[0] == 1:
+                elem[0] = 0
+        return beta
 
 
 class UCB1(learner):
