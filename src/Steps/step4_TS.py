@@ -46,8 +46,9 @@ def getRates(simulator, products, nbItemMax):
         for index in range(len(learners)):
             learners[index].update(pulled_arm[index], rewards0[index], rewards1[index])
         l_alphas.update(pulled_arm_alpha, nbCustomer - entrance[pulled_arm_alpha], entrance[pulled_arm_alpha])
-        l_nbItem.update(pulled_arm_item, nbItemMax*rewards1[pulled_arm_item]-cart[pulled_arm_item],
-                        cart[pulled_arm_item])
+        if cart[pulled_arm_item] != 0:
+            l_nbItem.update(pulled_arm_item, nbItemMax*rewards1[pulled_arm_item]-cart[pulled_arm_item],
+                            cart[pulled_arm_item])
 
     convRates = []
     for learner in learners:

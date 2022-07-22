@@ -33,6 +33,10 @@ class Simulator:
 	#Accessor
 	def getUsers(self):
 		return self.users
+	
+	def getNbUsers(self):
+		"""Return the number of users class"""
+		return len(self.users)
 
 	def getSecondary(self):
 		return self.secondary
