@@ -81,14 +81,14 @@ def regret(n_experiment, Time,opt_CV, opt_Alpha,opt_Item):
     std_regret_CV = []
     # add np.cumsum in front of each to have the cumulated one
     for i in range(len(prod)):
-        regret_CV.append((np.mean(regret_per_experiment_CV[i], axis=0)))
-        std_regret_CV.append((np.std(regret_per_experiment_CV[i], axis=0)))
+        regret_CV.append(np.cumsum(np.mean(regret_per_experiment_CV[i], axis=0)))
+        std_regret_CV.append(np.cumsum(np.std(regret_per_experiment_CV[i], axis=0)))
     
-    regret_Alpha = (np.mean(regret_per_experiment_Alpha,axis=0))
-    std_Alpha = (np.std(regret_per_experiment_Alpha,axis=0))
+    regret_Alpha = np.cumsum(np.mean(regret_per_experiment_Alpha,axis=0))
+    std_Alpha = np.cumsum(np.std(regret_per_experiment_Alpha,axis=0))
 
-    regret_Item = (np.mean(regret_per_experiment_Item,axis=0))
-    std_Item = (np.std(regret_per_experiment_Item,axis=0))
+    regret_Item = np.cumsum(np.mean(regret_per_experiment_Item,axis=0))
+    std_Item = np.cumsum(np.std(regret_per_experiment_Item,axis=0))
 
     return regret_CV,std_regret_CV, regret_Alpha, std_Alpha, regret_Item, std_Item
 
@@ -104,15 +104,24 @@ def main():
     opt_CV = np.array([0.8, 0.6, 0.6, 0.4, 0.6])
     test = [[0.8,0.6,0.2,0],[0.6,0.4,0,0],[0.6,0,0,0],[0.4,0,0,0],[0.6,0.2,0,0]]
     deltas = [opt_CV[i] - np.array(test[i]) for i in range(len(prod))]
-    deltas_i = []
+    deltas_CV = []
     for i in range(len(prod)):
-        deltas_i.append(np.array([delta for delta in deltas[i] if delta > 0]))
+        deltas_CV.append(np.array([delta for delta in deltas[i] if delta > 0]))
+
+    opt_alpha, opt_item = 0.2,0.7
+
+    alpha_ratio = [0.2, 0.1, 0.2, 0.1, 0.2, 0.2]
+    deltas_alpha = np.array([opt_alpha - delta for delta in alpha_ratio if opt_alpha - delta  > 0])
 
     # we compute the corresponding regret, upperbound and std
-    regret_CV,std_regret_CV, regret_Alpha, std_Alpha, regret_Item, std_Item = regret(n_experiment, Time, opt_CV, 0.2,0.7)
+    regret_CV,std_regret_CV, regret_Alpha, std_Alpha, regret_Item, std_Item = regret(n_experiment, Time, opt_CV, opt_alpha, opt_item)
     UCB1_upper_bound_CV = []
+    UCB1_upper_bound_alpha = []
+    UCB1_upper_bound_item = []
     for i in range(len(prod)):
-        UCB1_upper_bound_CV.append(np.array([10*8*np.log(t)*sum(1/deltas_i[i]) + (1 + np.pi**2/3)*sum(deltas_i[i])
+        UCB1_upper_bound_CV.append(np.array([8*np.log(t)*sum(1/deltas_CV[i]) + (1 + np.pi**2/3)*sum(deltas_CV[i])
+                             for t in range(1,Time+1)]))
+    UCB1_upper_bound_alpha.append(np.array([8*np.log(t)*sum(1/deltas_alpha) + (1 + np.pi**2/3)*sum(deltas_alpha)
                              for t in range(1,Time+1)]))
 
     # we plot them
@@ -124,7 +133,7 @@ def main():
         plt.plot((regret_CV[i] + 1.96 *std_regret_CV[i]/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
         plt.plot((regret_CV[i] - 1.96 *std_regret_CV[i]/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
         #plt.plot(UCB1_upper_bound_CV[i], color='b', label='Upper bound')
-        plt.legend(["TS", "std up","std down", "upper bound"])
+        #plt.legend(["TS", "std up","std down", "upper bound"])
     plt.show()
     
     plt.figure(len(regret_CV)+1)
@@ -133,8 +142,8 @@ def main():
     plt.plot((regret_Alpha), 'r', label="regret")
     plt.plot((regret_Alpha + 1.96 *std_Alpha/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
     plt.plot((regret_Alpha - 1.96 *std_Alpha/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
-    #plt.plot(UCB1_upper_bound[i], color='b', label='Upper bound')
-    plt.legend(["TS", "std up","std down", "upper bound"])
+    #plt.plot(UCB1_upper_bound_CV[i], color='b', label='Upper bound')
+    #plt.legend(["TS", "std up","std down", "upper bound"])
     plt.show()
 
     plt.figure(len(regret_CV)+2)
@@ -143,8 +152,7 @@ def main():
     plt.plot((regret_Item), 'r', label="regret")
     plt.plot((regret_Item + 1.96 *std_Item/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
     plt.plot((regret_Item - 1.96 *std_Item/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
-    #plt.plot(UCB1_upper_bound[i], color='b', label='Upper bound')
-    plt.legend(["TS", "std up","std down", "upper bound"])
+    plt.legend(["TS", "std up","std down"])
     plt.show()
 
 

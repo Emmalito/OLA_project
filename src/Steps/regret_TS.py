@@ -81,14 +81,14 @@ def regret(n_experiment, Time,opt_CV, opt_Alpha,opt_Item):
     std_regret_CV = []
     # add np.cumsum in front of each to have the cumulated one
     for i in range(len(prod)):
-        regret_CV.append((np.mean(regret_per_experiment_CV[i], axis=0)))
-        std_regret_CV.append((np.std(regret_per_experiment_CV[i], axis=0)))
+        regret_CV.append(np.cumsum(np.mean(regret_per_experiment_CV[i], axis=0)))
+        std_regret_CV.append(np.cumsum(np.std(regret_per_experiment_CV[i], axis=0)))
     
-    regret_Alpha = (np.mean(regret_per_experiment_Alpha,axis=0))
-    std_Alpha = (np.std(regret_per_experiment_Alpha,axis=0))
+    regret_Alpha = np.cumsum(np.mean(regret_per_experiment_Alpha,axis=0))
+    std_Alpha = np.cumsum(np.std(regret_per_experiment_Alpha,axis=0))
 
-    regret_Item = (np.mean(regret_per_experiment_Item,axis=0))
-    std_Item = (np.std(regret_per_experiment_Item,axis=0))
+    regret_Item = np.cumsum(np.mean(regret_per_experiment_Item,axis=0))
+    std_Item = np.cumsum(np.std(regret_per_experiment_Item,axis=0))
 
     return regret_CV,std_regret_CV, regret_Alpha, std_Alpha, regret_Item, std_Item
 
@@ -108,12 +108,11 @@ def main():
     for i in range(len(prod)):
         deltas_i.append(np.array([delta for delta in deltas[i] if delta > 0]))
 
+    opt_alpha, opt_item = 0.2,0.7
+
     # we compute the corresponding regret, upperbound and std
-    regret_CV,std_regret_CV, regret_Alpha, std_Alpha, regret_Item, std_Item = regret(n_experiment, Time, opt_CV, 0.2,0.7)
-    TS_Learner_upper_bound_CV = []
-    for i in range(len(prod)):
-        TS_Learner_upper_bound_CV.append(np.array([10*8*np.log(t)*sum(1/deltas_i[i]) + (1 + np.pi**2/3)*sum(deltas_i[i])
-                             for t in range(1,Time+1)]))
+    regret_CV,std_regret_CV, regret_Alpha, std_Alpha, regret_Item, std_Item = regret(n_experiment, Time, opt_CV, opt_alpha, opt_item)
+
 
     # we plot them
     for i in range(len(regret_CV)):
@@ -121,30 +120,27 @@ def main():
         plt.xlabel("t")
         plt.ylabel("regrets")
         plt.plot((regret_CV[i]), 'r', label="regret")
-        plt.plot((regret_CV[i] + 1.96 *std_regret_CV[i]/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
-        plt.plot((regret_CV[i] - 1.96 *std_regret_CV[i]/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
-        #plt.plot(TS_Learner_upper_bound_CV[i], color='b', label='Upper bound')
-        plt.legend(["TS", "std up","std down", "upper bound"])
+        plt.plot((regret_CV[i] + std_regret_CV[i]),linestyle='--', color='g', label="std up")
+        plt.plot((regret_CV[i] - std_regret_CV[i]),linestyle='--', color='g', label="std down")
+        plt.legend(["TS", "std up","std down"])
     plt.show()
     
     plt.figure(len(regret_CV)+1)
     plt.xlabel("t")
     plt.ylabel("regrets")
     plt.plot((regret_Alpha), 'r', label="regret")
-    plt.plot((regret_Alpha + 1.96 *std_Alpha/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
-    plt.plot((regret_Alpha - 1.96 *std_Alpha/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
-    #plt.plot(TS_Learner_upper_bound[i], color='b', label='Upper bound')
-    plt.legend(["TS", "std up","std down", "upper bound"])
+    plt.plot((regret_Alpha + std_Alpha),linestyle='--', color='g', label="std up")
+    plt.plot((regret_Alpha - std_Alpha),linestyle='--', color='g', label="std down")
+    plt.legend(["TS", "std up","std down"])
     plt.show()
 
     plt.figure(len(regret_CV)+2)
     plt.xlabel("t")
     plt.ylabel("regrets")
     plt.plot((regret_Item), 'r', label="regret")
-    plt.plot((regret_Item + 1.96 *std_Item/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
-    plt.plot((regret_Item - 1.96 *std_Item/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
-    #plt.plot(TS_Learner_upper_bound[i], color='b', label='Upper bound')
-    plt.legend(["TS", "std up","std down", "upper bound"])
+    plt.plot((regret_Item + std_Item),linestyle='--', color='g', label="std up")
+    plt.plot((regret_Item - std_Item),linestyle='--', color='g', label="std down")
+    plt.legend(["TS", "std up","std down"])
     plt.show()
 
 
