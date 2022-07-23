@@ -133,7 +133,7 @@ def main():
         plt.plot((regret_CV[i] + 1.96 *std_regret_CV[i]/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
         plt.plot((regret_CV[i] - 1.96 *std_regret_CV[i]/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
         #plt.plot(UCB1_upper_bound_CV[i], color='b', label='Upper bound')
-        #plt.legend(["TS", "std up","std down", "upper bound"])
+        plt.legend(["UCB1","std up","std down"])
     plt.show()
     
     plt.figure(len(regret_CV)+1)
@@ -143,7 +143,7 @@ def main():
     plt.plot((regret_Alpha + 1.96 *std_Alpha/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
     plt.plot((regret_Alpha - 1.96 *std_Alpha/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
     #plt.plot(UCB1_upper_bound_CV[i], color='b', label='Upper bound')
-    #plt.legend(["TS", "std up","std down", "upper bound"])
+    plt.legend(["UCB1", "std up","std down"])
     plt.show()
 
     plt.figure(len(regret_CV)+2)
@@ -152,7 +152,7 @@ def main():
     plt.plot((regret_Item), 'r', label="regret")
     plt.plot((regret_Item + 1.96 *std_Item/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
     plt.plot((regret_Item - 1.96 *std_Item/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
-    plt.legend(["TS", "std up","std down"])
+    plt.legend(["UCB1", "std up","std down"])
     plt.show()
 
 
