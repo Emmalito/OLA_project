@@ -48,25 +48,26 @@ def getConversionRates(simulator, lambdaValue):
 
 if __name__ == "__main__":
     #0 - We recupere our environment
-    simulator, _ = environment()
+    simulator, products = environment()
 
     #1 - We learn the conversion rates
     lambdaValue = simulator.getGraph(0).getLambda()
-    weights = getConversionRates(simulator, 0.9)
-    print(weights)
+    graphWeights = getConversionRates(simulator, 0.9)
 
     #2 - We fix the others parameters
-    #margin = [product.getPrices() for product in products] #We fix the price as the margin
-    #alphas = simulator.getUsers()[0].getAlphas()           #We recupere the expected alphas
-    #nbItemMax = simulator.getUsers()[0].get_nbItemMax()
-    #nbItemSold = [npr.binomial(nbItemMax, 0.7) for _ in range(5)]
-    #totalUsers = nbCustomer * nbDays
-    #graphWeights = [0.2,0.3,0.2,0.3]
+    conversionRates = [[0.8, 0.6, 0.2, 0.0], [0.6, 0.4, 0.0, 0.0],
+                       [0.6, 0.0, 0.0, 0.0], [0.4, 0.0, 0.0, 0.0],
+                       [0.6, 0.2, 0.0, 0.0]]
+    margin = [product.getPrices() for product in products] #We fix the price as the margin
+    alphas = simulator.getUsers()[0].getAlphas()           #We recupere the expected alphas
+    nbItemMax = simulator.getUsers()[0].get_nbItemMax()
+    nbItemSold = [npr.binomial(nbItemMax, 0.7) for _ in range(5)]
+    totalUsers = nbCustomer * nbDays
 
-    ##3 - We play the algorithm
-    #bestPrices, bestTotalmargin, _ = optimization(margin, conversionRates, alphas,
-    #                                            nbItemSold, totalUsers, graphWeights)
-    #for idx in range(len(bestPrices)):
-    #    print("For the product ", idx, " the best price is ",
-    #          margin[idx][bestPrices[idx]])
-    #print("The total margin with this configuration is ", bestTotalmargin)
+    #3 - We play the algorithm
+    bestPrices, bestTotalmargin, _ = optimization(margin, conversionRates, alphas,
+                                                nbItemSold, totalUsers, graphWeights)
+    for idx in range(len(bestPrices)):
+        print("For the product ", idx, " the best price is ",
+              margin[idx][bestPrices[idx]])
+    print("The total margin with this configuration is ", bestTotalmargin)
