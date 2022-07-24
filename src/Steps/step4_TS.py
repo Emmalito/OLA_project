@@ -75,7 +75,7 @@ if __name__ == "__main__":
     #2 - We fix the others parameters
     margin = [product.getPrices() for product in products] #We fix the price as the margin
     totalUsers = nbCustomer * nbDays
-    graphWeights = [0.2,0.3,0.2,0.3]
+    graphWeights = [[0.7, 0.6, 0.9, 0.6, 0.2], [0.4, 0.2, 0.1, 0.5, 0.1]]
 
     #3 - We play the algorithm
     bestPrices, bestTotalmargin, _ = optimization(margin, conversionRates, alphas,
