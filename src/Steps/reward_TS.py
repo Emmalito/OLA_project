@@ -125,7 +125,7 @@ def main():
         plt.plot((reward_CV[i] + 1.96 *std_reward_CV[i]/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
         plt.plot((reward_CV[i] - 1.96 *std_reward_CV[i]/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
         #plt.plot(TS_Learner_upper_bound_CV[i], color='b', label='Upper bound')
-        plt.legend(["TS", "std up","std down", "upper bound"])
+        plt.legend(["TS", "best","std up","std down"])
     plt.show()
     
     plt.figure(len(reward_CV)+1)
@@ -136,7 +136,7 @@ def main():
     plt.plot((reward_Alpha + 1.96 *std_Alpha/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
     plt.plot((reward_Alpha - 1.96 *std_Alpha/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
     #plt.plot(TS_Learner_upper_bound[i], color='b', label='Upper bound')
-    plt.legend(["TS", "std up","std down", "upper bound"])
+    plt.legend(["TS", "best","std up","std down"])
     plt.show()
 
     plt.figure(len(reward_CV)+2)
@@ -147,7 +147,7 @@ def main():
     plt.plot((reward_Item + 1.96 *std_Item/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std up")
     plt.plot((reward_Item - 1.96 *std_Item/ np.sqrt(n_experiment)),linestyle='--', color='g', label="std down")
     #plt.plot(TS_Learner_upper_bound[i], color='b', label='Upper bound')
-    plt.legend(["TS", "std up","std down", "upper bound"])
+    plt.legend(["TS", "best","std up","std down"])
     plt.show()
 
 
