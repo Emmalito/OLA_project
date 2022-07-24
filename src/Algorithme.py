@@ -14,15 +14,25 @@ def result(index, margin, expectedSales):
 
 def reachWebPage(graphWeights, alphas):
     """Define the probability to reach the web pages"""
-    return 1
+    probas = []
+    for index in range(5):
+        proba = alphas[index]
+        probas.append(proba)
+    
+    return probas
 
 
 def optimization(margin, convRates, alphas, nbItemSold, nbUsers, graphWeights):
     """Run the optimisation algorithm"""
 
-    probaReachWebPage = reachWebPage(graphWeights, alphas)
+    probas = reachWebPage(graphWeights, alphas)
     expectedSales = [[convRates[e][i]*margin[e][i]*nbUsers*nbItemSold[i] for i in range (len(convRates[e]))] for e in range(len(convRates))]
-    #expectedSales = convRates * nbUsers * nbItemSold * probaReachWebPage # ne doit pas aller jusquau 500
+    for product in expectedSales:
+        index = 0
+        for sale in product:
+            sale = sale * alphas[index]
+            index += 1
+    
     index = [0 for _ in range(len(margin))]
 
     valueObjectifFunc = result(index, margin, expectedSales)
