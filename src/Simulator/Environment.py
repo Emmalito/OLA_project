@@ -41,7 +41,7 @@ def bigEnvironment():
     """Set up the environment for the step 7"""
 
     #Create the 3 users'classes
-    user1 = User([0.2, 0.1, 0.2, 0.1, 0.2, 0.2], 100, 6, 15)
+    user1 = User([0.2, 0.1, 0.2, 0.1, 0.2, 0.2], 100, 5, 15)
     user2 = User([0.1, 0.3, 0.3, 0.1, 0.1, 0.1], 150, 12, 20)
     user3 = User([0.4, 0.1, 0.05, 0.25, 0.05, 0.15], 175, 9, 10)
 
