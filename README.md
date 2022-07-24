@@ -1,63 +1,24 @@
 # Online Learning Applications project
 
-short description
-
-Part 1:
-
-descrition
-
-
-Part 2:
-
-description
-
-
-
 ## Structure
 
 The architecture of this project is divide into 2 folders:
 
 - src/: It contains all the source files to run the project
-- test/: It contains all the test files
 
-There is also a README and the pdf of the project.
+  - src/Evaluation: Folder for the evaluation of the algorithms
+  - src/Learner: Folder of the learner's 'code source
+  - src/Simulator: Folder for the code of the simulator
+  - src/Steps: Folder of the algorithms for each step
+- test/: It contains all the test files for the simulator
 
+There is also a README and the subject of the project.
 
 ## Run the project
 
-To run the project, make sure that you have (at least) python 3 and all the following libraries:
+To run one step of the project, make sure that you have (at least) python 3 and all the recquire libraries
 
-- numpy;
+Then, to run a step since the root folder enter this commands on your terminal:
 
-Then, to run the project since the root folder enter this commands on your terminal:
-
-- `python src/main.py`
-
-
-## Micro-tuto on git
-
-To clone the repo:
-
-- `git clone https://github.com/Ludvig9811/OLA_project.git`
-
-To update the repo:
-
-- `git pull`
-
-To create a branch:
-
-* `git checkout -b <new-branch>`
-* `git push --set-upstream origin <new-branch>`
-
-To get the distant branch:
-
-* `git fetch`
-* `git checkout branche-distante`
-
-To push a modification:
-
-- `git status`
-- `git add <fileName>`
-- `git commit -m "<Description of the modification>"`
-- `git status` (again, to be sure!)
-- `git push`
+- `python src/Steps/stepX_YY.py`
+  with X the step number and YY = {TS; UCB1}
