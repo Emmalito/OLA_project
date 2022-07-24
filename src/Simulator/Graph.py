@@ -63,6 +63,8 @@ class Graph:
 			nextProducts.append(p1)
 		if(binomial(1, w2*self.mu)):
 			nextProducts.append(p2)
+		while None in nextProducts:
+			nextProducts.remove(None)
 		return nextProducts
 
 
